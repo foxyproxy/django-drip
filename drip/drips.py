@@ -1,5 +1,5 @@
 from django.conf import settings
-from django.contrib.auth.models import User
+from django.contrib.auth import get_user_model
 from django.template import Context, Template
 from django.utils.importlib import import_module
 from django.core.mail import EmailMultiAlternatives
@@ -231,4 +231,4 @@ class DripBase(object):
         Alternatively, you could create Drips on the fly
         using a queryset builder from the admin interface...
         """
-        return User.objects
+        return get_user_model().objects

@@ -1,6 +1,7 @@
 from datetime import datetime
 
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
@@ -8,6 +9,10 @@ import timedelta
 
 
 class Drip(models.Model):
+    """
+    A drip is an email we are to send to some set of users on a particular
+    condition.
+    """
     date = models.DateTimeField(auto_now_add=True)
     lastchanged = models.DateTimeField(auto_now=True)
 
@@ -51,7 +56,7 @@ class SentDrip(models.Model):
     date = models.DateTimeField(auto_now_add=True)
 
     drip = models.ForeignKey('drip.Drip', related_name='sent_drips')
-    user = models.ForeignKey('auth.User', related_name='sent_drips')
+    user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='sent_drips')
 
     subject = models.TextField()
     body = models.TextField()
