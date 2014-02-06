@@ -1,12 +1,10 @@
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from django.db import models
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 
-# just using this to parse, but totally insane package naming...
-# https://bitbucket.org/schinckel/django-timedelta-field/
-import timedelta as djangotimedelta
+import timedelta
 
 
 class Drip(models.Model):
@@ -123,11 +121,11 @@ class QuerySetRule(models.Model):
         # set time deltas and dates
         if field_value.startswith('now-'):
             field_value = self.field_value.replace('now-', '')
-            delta = djangotimedelta.parse(field_value)
+            delta = timedelta.parse(field_value)
             field_value = now() - delta
         elif field_value.startswith('now+'):
             field_value = self.field_value.replace('now+', '')
-            delta = djangotimedelta.parse(field_value)
+            delta = timedelta.parse(field_value)
             field_value = now() + delta
 
         # set booleans
