@@ -8,10 +8,13 @@ from django.core.exceptions import ValidationError
 import timedelta
 
 
-class Drip(models.Model):
+class AbstractBaseDripModel(models.Model):
     """
     A drip is an email we are to send to some set of users on a particular
     condition.
+
+    Subclass this model if you need to track different types of drips completely
+    separately.
     """
     date = models.DateTimeField(auto_now_add=True)
     lastchanged = models.DateTimeField(auto_now=True)
@@ -33,6 +36,9 @@ class Drip(models.Model):
         help_text='You will have settings and user in the context.')
     message_class = models.CharField(max_length=120, blank=True, default='default')
 
+    class Meta:
+        abstract = True
+
     @property
     def drip(self):
         from drip.drips import DripBase
@@ -47,6 +53,12 @@ class Drip(models.Model):
 
     def __unicode__(self):
         return self.name
+
+
+class Drip(AbstractBaseDripModel):
+    """
+    A default Drip implementation.
+    """
 
 
 class SentDrip(models.Model):
