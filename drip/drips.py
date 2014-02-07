@@ -192,9 +192,9 @@ class DripBase(object):
         """
         Send the message to each user on the queryset.
 
-        Create SentDrip for each user that gets a message.
+        calls self.sent_drip() for each drip sent.
 
-        Returns count of created SentDrips.
+        Returns count of messages successfully sent
         """
 
         if not self.from_email:
@@ -206,17 +206,23 @@ class DripBase(object):
             message_instance = MessageClass(self, user)
             result = message_instance.message.send()
             if result:
-                SentDrip.objects.create(
-                    drip=self.drip_model,
-                    user=user,
-                    from_email=self.from_email,
-                    from_email_name=self.from_email_name,
-                    subject=message_instance.subject,
-                    body=message_instance.body
-                )
+                self.record_sent_message(user, message_instance)
                 count += 1
 
         return count
+
+    def record_sent_message(self, user, message):
+        """
+        record a drip was sent for a user with a message
+        """
+        return SentDrip.objects.create(
+            drip=self.drip_model,
+            user=user,
+            from_email=self.from_email,
+            from_email_name=self.from_email_name,
+            subject=message.subject,
+            body=message.body
+        )
 
 
     ####################
