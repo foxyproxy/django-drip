@@ -103,11 +103,11 @@ LOOKUP_TYPES = (
     ('iendswith', 'ends with (case insensitive)'),
 )
 
-class QuerySetRule(models.Model):
+
+class AbstractBaseQuerySetRule(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     lastchanged = models.DateTimeField(auto_now=True)
 
-    drip = models.ForeignKey(Drip, related_name='queryset_rules')
 
     method_type = models.CharField(max_length=12, default='filter', choices=METHOD_TYPES)
     field_name = models.CharField(max_length=128, verbose_name='Field name off User')
@@ -116,6 +116,9 @@ class QuerySetRule(models.Model):
     field_value = models.CharField(max_length=255,
         help_text=('Can be anything from a number, to a string. Or, do ' +
                    '`now-7 days` or `now+3 days` for fancy timedelta.'))
+
+    class Meta:
+        abstract = True
 
     def clean(self):
         try:
@@ -160,3 +163,8 @@ class QuerySetRule(models.Model):
 
         # catch as default
         return qs.filter(**kwargs)
+
+
+class QuerySetRule(AbstractBaseQuerySetRule):
+    drip = models.ForeignKey(Drip, related_name='queryset_rules')
+
