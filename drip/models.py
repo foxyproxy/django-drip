@@ -120,9 +120,12 @@ class AbstractBaseQuerySetRule(models.Model):
     class Meta:
         abstract = True
 
+    def get_model_to_query(self):
+        return User
+
     def clean(self):
         try:
-            self.apply(User.objects.all())
+            self.apply(self.get_model_to_query().objects.all())
         except Exception as e:
             raise ValidationError(
                 '%s raised trying to apply rule: %s' % (type(e).__name__, e))
